@@ -139,6 +139,13 @@ describe('config', function() {
             });
         });
 
+        it('should return a reference to the config module when invoked', () => {
+            const appName = _testValues.getString('appName');
+            const ret = _config.setApplicationScope(appName);
+
+            expect(ret).to.equal(_config);
+        });
+
         it('should set the default scope for configs if a valid scope is specified', () => {
             const expectedScope = _testValues.getString('defaultScope');
 

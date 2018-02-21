@@ -132,6 +132,7 @@ module.exports = {
     setApplicationScope: function(scope) {
         _argValidator.checkString(scope).throw('Invalid scope (arg #1)');
         _applicationScope = scope;
+        return module.exports;
     },
 
     /**
