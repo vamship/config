@@ -15,6 +15,6 @@ describe('index', function() {
     });
 
     it('should implement methods required by the interface', function() {
-        expect(_index.config).to.equal(_config);
+        expect(_index).to.equal(_config);
     });
 });
