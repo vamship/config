@@ -84,17 +84,17 @@ configuration specific to a runtime environment.
 
 ```
 const config = require('@vamship/config')
-                    // Configure application wide configuration
-                    .configure('myApp', {
-                        // Hard coded default properties
-                        api: {
-                            host: 'example.com'
-                        }
-                    })
-                    // Set default application scope.
-                    .setApplicationScope(process.env.NODE_ENV)
-                    // Get the config object
-                    .getConfig();
+                // Configure application wide configuration
+                .configure('myApp', {
+                    // Hard coded default properties
+                    api: {
+                        host: 'example.com'
+                    }
+                })
+                // Set default application scope.
+                .setApplicationScope(process.env.NODE_ENV)
+                // Get the config object
+                .getConfig();
 
 // Read config parameters
 const host = config.get('api.host');
@@ -111,4 +111,41 @@ class API {
         this._host = config.get('api.host');
     }
 }
+```
+
+### Note on using config with AWS Lambdas
+
+AWS Lambdas are intended to be stateless, with execution contexts changing
+based on the invocation alias or version number. When using aliases, it is
+possible to have multiple aliases pointing to a single instance of the lambda
+function, running within the same container. It is also possible that when
+executing, different executions may require different configuration to be
+loaded.
+
+In order to handle such scenarios gracefully, it is best to not set a default
+application scope on the config, and explicitly load configuration for a
+specific scope by using `getConfig(<scope>)`, as shown below:
+
+```
+module.exports = (event, context, callback) => {
+
+    ...
+
+    alias = (alias === undefined || alias === '$LATEST') ? 'default' : alias;
+    let alias = arn.split(':')[7];
+
+    const config = require('@vamship/config')
+                    // Configure application wide configuration
+                    .configure('myApp', {
+                        // Hard coded default properties
+                        api: {
+                            host: 'example.com'
+                        }
+                    })
+
+                    // Get the config object based on alias
+                    .getConfig(alias);
+
+    ...
+};
 ```
