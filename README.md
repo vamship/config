@@ -77,8 +77,8 @@ Before creating any config instances, the config must be configured using the
 application, so that each call to `getConfig()` always brings back
 configuration specific to a runtime environment.
 
->If application scope is not set by calling `setApplicationScope()`, then each
->module must explicitly pass in a scope value when calling `getConfig()`.
+> If application scope is not set by calling `setApplicationScope()`, then each
+> module must explicitly pass in a scope value when calling `getConfig()`.
 
 #### index.js (application entry point):
 
