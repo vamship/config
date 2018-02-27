@@ -61,10 +61,10 @@ let _isInitialized = false;
  * documentation.
  * </caption>
  *
- * myApp_default__host='dev.example.com'
- * myApp_default__log__level='info'
- * myApp_dev__log__level='debug'
- * myApp_prod__host='prod.example.com'
+ * export myApp_default__host='dev.example.com'
+ * export myApp_default__log__level='info'
+ * export myApp_dev__log__level='debug'
+ * export myApp_prod__host='prod.example.com'
  *
  * @module config
  */

@@ -60,6 +60,38 @@ then use this library to instantiate config objects that are specific to that
 module/class. As long as config configuration occurs prior to instantiation,
 everything is good.
 
+## Configuration Data Structure
+
+Data for this module can be present in a file named `.<appName>rc`, or in
+environment variables. This is standard functionality supported by the
+[rc](https://www.npmjs.com/package/rc) library. However, in order to support
+multiple environments, configuration data must be structured as follows:
+
+#### When using a config file:
+
+```
+{
+    "default": {
+        // Default configuration parameters go here.
+    },
+    "dev": {
+        // Dev specific overrides go here.
+    },
+    "prod": {
+        // Prod specific overrides go here.
+    }
+}
+```
+
+#### When using environment variables:
+
+```
+export myApp_default__host='dev.example.com'
+export myApp_default__log__level='info'
+export myApp_dev__log__level='debug'
+export myApp_prod__host='prod.example.com'
+```
+
 ## Installation
 
 This library can be installed using npm:
