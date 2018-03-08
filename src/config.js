@@ -94,8 +94,10 @@ module.exports = {
      *         chaining of method calls.
      */
     configure: function(name, defaults) {
-        _argValidator.checkString(name).throw('Invalid appName (arg #1)');
-        _argValidator.checkObject(defaults).do(() => (defaults = {}));
+        _argValidator.checkString(name, 1, 'Invalid appName (arg #1)');
+        if (!_argValidator.checkObject(defaults)) {
+            defaults = {};
+        }
 
         if (!_isInitialized) {
             _config = _rc(name, defaults);
@@ -130,7 +132,7 @@ module.exports = {
      *         chaining of method calls.
      */
     setApplicationScope: function(scope) {
-        _argValidator.checkString(scope).throw('Invalid scope (arg #1)');
+        _argValidator.checkString(scope, 1, 'Invalid scope (arg #1)');
         _applicationScope = scope;
         return module.exports;
     },
@@ -151,7 +153,9 @@ module.exports = {
      *         configuration parameters.
      */
     getConfig: function(scope) {
-        _argValidator.checkString(scope).do(() => (scope = _applicationScope));
+        if (!_argValidator.checkString(scope)) {
+            scope = _applicationScope;
+        }
 
         let config = _configCache[scope];
         if (!config) {

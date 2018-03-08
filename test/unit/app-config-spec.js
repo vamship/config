@@ -91,7 +91,7 @@ describe('AppConfig', function() {
                     let value = config.get(fullPropName);
 
                     expect(value).to.equal(expectedValue);
-                    if (!_argValidator.checkObject(expectedValue).hasErrors) {
+                    if (_argValidator.checkObject(expectedValue)) {
                         doTest(expectedValue, `${fullPropName}.`);
                     }
                 }

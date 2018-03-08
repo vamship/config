@@ -19,9 +19,7 @@ class AppConfig {
      *        javascript object.
      */
     constructor(data) {
-        _argValidator
-            .checkObject(data)
-            .throw('Invalid configuration data (arg #1)');
+        _argValidator.checkObject(data, 'Invalid configuration data (arg #1)');
 
         this._data = data;
     }
