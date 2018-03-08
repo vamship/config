@@ -33,11 +33,11 @@ It is important that each sub module load configuration for the correct
 execution environment, and this is typically addressed in one of two ways:
 This is typically addressed in one of two ways:
 
-1. Each module looks up an environment variable (such as NODE_ENV), and uses
-   this value to determine the current execution environment.
-2. The entry point for the application initializes the config, and passes the
-   entire config, or relevant parts of it down to all other objects that are
-   created within the application
+1.  Each module looks up an environment variable (such as NODE_ENV), and uses
+    this value to determine the current execution environment.
+2.  The entry point for the application initializes the config, and passes the
+    entire config, or relevant parts of it down to all other objects that are
+    created within the application
 
 The use of an environment variable to load specific configuration data works
 for many scenarios, and this functionality is supported out of the box by
