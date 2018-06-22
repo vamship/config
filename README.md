@@ -8,6 +8,10 @@ abstracts the configuration and creation of application wide config objects.
 Actual logging functionality is provided by
 [rc](https://www.npmjs.com/package/rc)
 
+## API Documentation
+
+API documentation can be found [here](https://vamship.github.io/config).
+
 ## Motivation
 
 Using configuration files to avoid hard coding parameters is a well understood
