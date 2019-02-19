@@ -34,7 +34,7 @@
   "dependencies": {
     "@vamship/arg-utils": "^2.2.1",
     "@vamship/error-types": "^1.5.1",
-    "defaults-deep": "^0.2.4",
+    "deep-defaults": "^1.0.5",
     "dot-prop": "^4.2.0",
     "rc": "^1.2.8"
   },

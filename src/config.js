@@ -2,7 +2,7 @@
 
 const { argValidator: _argValidator } = require('@vamship/arg-utils');
 const _rc = require('rc');
-const _defaultsDeep = require('defaults-deep');
+const _deepDefaults = require('deep-defaults');
 const AppConfig = require('./app-config');
 
 const DEFAULT_APP_SCOPE = 'default';
@@ -159,7 +159,10 @@ module.exports = {
 
         let config = _configCache[scope];
         if (!config) {
-            const data = _defaultsDeep({}, _config[scope], _config.default);
+            const data = _deepDefaults(
+                _deepDefaults({}, _config[scope]),
+                _config.default
+            );
             config = new AppConfig(data);
             if (_isInitialized) {
                 _configCache[scope] = config;
