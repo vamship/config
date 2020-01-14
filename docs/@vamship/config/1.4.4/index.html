@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppConfig.html">AppConfig</a><ul class='methods'><li data-type='method'><a href="AppConfig.html#get">get</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-config.html">config</a><ul class='methods'><li data-type='method'><a href="module-config.html#.configure">configure</a></li><li data-type='method'><a href="module-config.html#.getApplicationScope">getApplicationScope</a></li><li data-type='method'><a href="module-config.html#.getConfig">getConfig</a></li><li data-type='method'><a href="module-config.html#.setApplicationScope">setApplicationScope</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme">
+        <article><h1>@vamship/config</h1>
+<p><em>Singleton module for configuration and initialization of application wide
+configuration objects.</em></p>
+<p>This library does not actually provide logging functionality, but merely
+abstracts the configuration and creation of application wide config objects.
+Actual logging functionality is provided by
+<a href="https://www.npmjs.com/package/rc">rc</a></p>
+<h2>API Documentation</h2>
+<p>API documentation can be found <a href="https://vamship.github.io/config">here</a>.</p>
+<h2>Motivation</h2>
+<p>Using configuration files to avoid hard coding parameters is a well understood
+practice. Most applications leverage configuration files to store values
+specific to certain execution environments (ex: dev, qa, prod, etc.), allowing
+the code to be environment agnostic.</p>
+<p>There are several good libraries available for working with configuration files,
+such as: <a href="https://www.npmjs.com/package/rc">rc</a> and
+<a href="https://www.npmjs.com/package/config">config</a>, some of which even support
+multiple execution environments, albeit with some drawbacks (like dependency on
+a NODE_ENV variable, for example).</p>
+<p>This library is does not reimplement functionality already provided by these
+libraries. Instead, it is focused on solving the problem of being able to
+initialize and select environment specific (also referred to as scope specific)
+configurations consistently from within different modules in a single
+application.</p>
+<p>Most applications rely on having multiple code modules, broken up into separate
+files, and each module may want to read configuration data during execution.
+It is important that each sub module load configuration for the correct
+execution environment, and this is typically addressed in one of two ways:
+This is typically addressed in one of two ways:</p>
+<ol>
+<li>Each module looks up an environment variable (such as NODE_ENV), and uses
+this value to determine the current execution environment.</li>
+<li>The entry point for the application initializes the config, and passes the
+entire config, or relevant parts of it down to all other objects that are
+created within the application</li>
+</ol>
+<p>The use of an environment variable to load specific configuration data works
+for many scenarios, and this functionality is supported out of the box by
+modules such as <a href="https://www.npmjs.com/package/config">config</a>. However, does
+not work very well with stateless execution environments such as those
+encountered with AWS Lambdas. Lambda functions are executed within containers
+behind the scenes, and each execution instance may require different
+configurations (based on the alias, for example).</p>
+<p>Initializing the configuration object at the entry point and passing it down
+to each of the submodules alleviates this problem, but that makes the object
+interfaces clunky, sometimes requiring a parent object to accept a config
+object for the sole reaon that its child components need it.</p>
+<p>This library attempts to solve these problems by providing static interfaces for
+the configuration and instantiation of a config object. The config object is
+configured with application wide settings in the main entry point of the
+program, such as an <code>index.js</code> file. All other modules with the application can
+then use this library to instantiate config objects that are specific to that
+module/class. As long as config configuration occurs prior to instantiation,
+everything is good.</p>
+<h2>Configuration Data Structure</h2>
+<p>Data for this module can be present in a file named <code>.&lt;appName&gt;rc</code>, or in
+environment variables. This is standard functionality supported by the
+<a href="https://www.npmjs.com/package/rc">rc</a> library. However, in order to support
+multiple environments, configuration data must be structured as follows:</p>
+<h4>When using a config file:</h4>
+<pre class="prettyprint source"><code>{
+    &quot;default&quot;: {
+        // Default configuration parameters go here.
+    },
+    &quot;dev&quot;: {
+        // Dev specific overrides go here.
+    },
+    &quot;prod&quot;: {
+        // Prod specific overrides go here.
+    }
+}
+</code></pre>
+<h4>When using environment variables:</h4>
+<pre class="prettyprint source"><code>export myApp_default__host='dev.example.com'
+export myApp_default__log__level='info'
+export myApp_dev__log__level='debug'
+export myApp_prod__host='prod.example.com'
+</code></pre>
+<h2>Installation</h2>
+<p>This library can be installed using npm:</p>
+<pre class="prettyprint source"><code>npm install @vamship/config
+</code></pre>
+<h2>Usage</h2>
+<h3>Using the config</h3>
+<p>Before creating any config instances, the config must be configured using the
+<code>configure()</code> method. Optionally, a default scope can be set for the
+application, so that each call to <code>getConfig()</code> always brings back
+configuration specific to a runtime environment.</p>
+<blockquote>
+<p>If application scope is not set by calling <code>setApplicationScope()</code>, then each
+module must explicitly pass in a scope value when calling <code>getConfig()</code>.</p>
+</blockquote>
+<h4>index.js (application entry point):</h4>
+<pre class="prettyprint source"><code>const config = require('@vamship/config')
+                // Configure application wide configuration
+                .configure('myApp', {
+                    // Hard coded default properties
+                    api: {
+                        host: 'example.com'
+                    }
+                })
+                // Set default application scope.
+                .setApplicationScope(process.env.NODE_ENV)
+                // Get the config object
+                .getConfig();
+
+// Read config parameters
+const host = config.get('api.host');
+</code></pre>
+<h4>api.js (Class that makes API calls):</h4>
+<pre class="prettyprint source"><code>const config = require('@vamship/config').getConfig();
+
+class API {
+    constructor() {
+        // Nested properties can be accessed via dot separated property names!
+        this._host = config.get('api.host');
+    }
+}
+</code></pre>
+<h3>Note on using config with AWS Lambdas</h3>
+<p>AWS Lambdas are intended to be stateless, with execution contexts changing
+based on the invocation alias or version number. When using aliases, it is
+possible to have multiple aliases pointing to a single instance of the lambda
+function, running within the same container. It is also possible that when
+executing, different executions may require different configuration to be
+loaded.</p>
+<p>In order to handle such scenarios gracefully, it is best to not set a default
+application scope on the config, and explicitly load configuration for a
+specific scope by using <code>getConfig(&lt;scope&gt;)</code>, as shown below:</p>
+<pre class="prettyprint source"><code>module.exports = (event, context, callback) => {
+
+    ...
+
+    alias = (alias === undefined || alias === '$LATEST') ? 'default' : alias;
+    let alias = arn.split(':')[7];
+
+    const config = require('@vamship/config')
+                    // Configure application wide configuration
+                    .configure('myApp', {
+                        // Hard coded default properties
+                        api: {
+                            host: 'example.com'
+                        }
+                    })
+
+                    // Get the config object based on alias
+                    .getConfig(alias);
+
+    ...
+};
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Tue Jan 14 2020 09:38:29 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
