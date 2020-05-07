@@ -93,7 +93,7 @@ module.exports = {
      * @return {module:config} A reference to the current module, allowing for
      *         chaining of method calls.
      */
-    configure: function(name, defaults) {
+    configure: function (name, defaults) {
         _argValidator.checkString(name, 1, 'Invalid appName (arg #1)');
         if (!_argValidator.checkObject(defaults)) {
             defaults = {};
@@ -116,7 +116,7 @@ module.exports = {
      *
      * @return {String} The default scope that the config object will use.
      */
-    getApplicationScope: function(scope) {
+    getApplicationScope: function (scope) {
         return _applicationScope;
     },
 
@@ -131,7 +131,7 @@ module.exports = {
      * @return {module:config} A reference to the current module, allowing for
      *         chaining of method calls.
      */
-    setApplicationScope: function(scope) {
+    setApplicationScope: function (scope) {
         _argValidator.checkString(scope, 1, 'Invalid scope (arg #1)');
         _applicationScope = scope;
         return module.exports;
@@ -152,7 +152,7 @@ module.exports = {
      * @return {AppConfig} A configuration object that can be used to query for
      *         configuration parameters.
      */
-    getConfig: function(scope) {
+    getConfig: function (scope) {
         if (!_argValidator.checkString(scope)) {
             scope = _applicationScope;
         }
@@ -170,5 +170,5 @@ module.exports = {
         }
 
         return config;
-    }
+    },
 };

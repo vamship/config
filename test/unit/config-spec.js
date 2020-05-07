@@ -14,7 +14,7 @@ const AppConfig = require('../../src/app-config');
 
 let _config = null;
 
-describe('config', function() {
+describe('config', function () {
     const DEFAULT_SCOPE = 'default';
     let AppConfigMock = null;
     let _rcMock = null;
@@ -200,7 +200,7 @@ describe('config', function() {
         it('should return the default configuration if the specified scope is "default"', () => {
             const appName = _testValues.getString('appName');
             const defaultConfig = {
-                foo: 'bar'
+                foo: 'bar',
             };
             _config.configure(appName, { default: defaultConfig });
 
@@ -218,7 +218,7 @@ describe('config', function() {
         it('should return the default configuration if the specified scope does not exist', () => {
             const appName = _testValues.getString('appName');
             const defaultConfig = {
-                foo: 'bar'
+                foo: 'bar',
             };
             _config.configure(appName, { default: defaultConfig });
 
@@ -240,17 +240,17 @@ describe('config', function() {
             const defaults = {
                 default: {
                     foo: 'bar',
-                    baz: 'chaz'
+                    baz: 'chaz',
                 },
                 [scope]: {
                     xyz: 123,
-                    baz: 'faz'
-                }
+                    baz: 'faz',
+                },
             };
             const expectedConfig = {
                 foo: 'bar',
                 xyz: 123,
-                baz: 'faz'
+                baz: 'faz',
             };
 
             _config.configure(appName, defaults);
@@ -271,17 +271,17 @@ describe('config', function() {
             const defaults = {
                 default: {
                     foo: 'bar',
-                    baz: 'chaz'
+                    baz: 'chaz',
                 },
                 [scope]: {
                     xyz: 123,
-                    baz: 'faz'
-                }
+                    baz: 'faz',
+                },
             };
             const expectedConfig = {
                 foo: 'bar',
                 xyz: 123,
-                baz: 'faz'
+                baz: 'faz',
             };
             _config.configure(appName, defaults);
             _config.setApplicationScope(scope);
@@ -309,17 +309,17 @@ describe('config', function() {
             const defaults = {
                 default: {
                     foo: 'bar',
-                    baz: 'chaz'
+                    baz: 'chaz',
                 },
                 [scope]: {
                     xyz: 123,
-                    baz: 'faz'
-                }
+                    baz: 'faz',
+                },
             };
             const expectedConfig = {
                 foo: 'bar',
                 xyz: 123,
-                baz: 'faz'
+                baz: 'faz',
             };
 
             _config.configure(appName, defaults);

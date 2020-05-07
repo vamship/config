@@ -13,7 +13,7 @@ const { ArgError } = require('@vamship/error-types').args;
 
 let AppConfig = null;
 
-describe('AppConfig', function() {
+describe('AppConfig', function () {
     function _createConfig(data) {
         data = data || {};
         return new AppConfig(data);
