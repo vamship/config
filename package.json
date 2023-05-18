@@ -1,6 +1,6 @@
 {
     "name": "@vamship/config",
-    "version": "1.4.16",
+    "version": "1.5.0",
     "description": "Wraps a config and provides access methods for scoped config values",
     "main": "src/index.js",
     "scripts": {
@@ -17,20 +17,25 @@
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@vamship/build-utils": "^1.1.0",
+        "@vamship/build-utils": "^1.5.1",
         "@vamship/test-utils": "^2.5.8",
-        "chai": "^4.3.4",
+        "chai": "^4.3.7",
         "chai-as-promised": "^7.1.1",
         "rewire": "^6.0.0",
-        "sinon": "^12.0.1",
+        "sinon": "^15.0.4",
         "sinon-chai": "^3.7.0"
     },
     "dependencies": {
         "@vamship/arg-utils": "^2.4.19",
-        "@vamship/error-types": "^1.7.20",
+        "@vamship/error-types": "^1.8.0",
         "deep-defaults": "^1.0.5",
-        "dot-prop": "^6.0.1",
+        "dot-prop": "^8.0.0",
         "rc": "^1.2.8"
+    },
+    "overrides": {
+        "glob-parent": "^6.0.2",
+        "jsdoc": "^4.0.2",
+        "sanitize-html": "^2.10.0"
     },
     "repository": {
         "type": "git",
