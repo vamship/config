@@ -40,7 +40,8 @@
             <pre class="prettyprint source linenums"><code>'use strict';
 
 const { argValidator: _argValidator } = require('@vamship/arg-utils');
-const _dp = require('dot-prop');
+const _has = require('lodash/has');
+const _get = require('lodash/get');
 
 /**
  * Wrapper for an application configuration object, based on configuration data
@@ -79,8 +80,8 @@ class AppConfig {
      *         returned.
      */
     get(prop) {
-        if (_dp.has(this._data, prop)) {
-            return _dp.get(this._data, prop);
+        if (_has(this._data, prop)) {
+            return _get(this._data, prop);
         }
     }
 }
