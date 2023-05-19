@@ -65,7 +65,7 @@ describe('AppConfig', function () {
             }
         });
 
-        it('should use the dot-prop library to lookup and return the appropriate config value', () => {
+        it('should use the lodash library (_.has, _.get methods) to lookup and return the appropriate config value', () => {
             const levels = ['', ''].map(() => {
                 let inputs = _testValues.allButObject();
                 return inputs.reduce((data, value) => {
