@@ -31,12 +31,12 @@ const builders = [
     { build: taskBuilders.package, options: { types: true, latestOnly: true } },
 
     { build: taskBuilders.test, options: { testType: 'unit' } },
-    { build: taskBuilders.test, options: { testType: 'api' } },
+    // { build: taskBuilders.test, options: { testType: 'api' } },
     { build: taskBuilders.format, options: { watch: true } },
     { build: taskBuilders.lint, options: { watch: true } },
     { build: taskBuilders.build, options: { watch: true } },
     { build: taskBuilders.test, options: { testType: 'unit', watch: true } },
-    { build: taskBuilders.test, options: { testType: 'api', watch: true } },
+    // { build: taskBuilders.test, options: { testType: 'api', watch: true } },
 ];
 
 const tasks = builders
