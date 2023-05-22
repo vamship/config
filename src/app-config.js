@@ -4,7 +4,6 @@ const { argValidator: _argValidator } = require('@vamship/arg-utils');
 const _has = require('lodash/has');
 const _get = require('lodash/get');
 
-
 /**
  * Wrapper for an application configuration object, based on configuration data
  * passed as a constructor parameter. Exposes methods to allow queryig of data
