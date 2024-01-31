@@ -1,5 +1,9 @@
 # @vamship/config
 
+> [!CAUTION]
+> This package is no longer maintained. Please consider using an alternative
+> such as node-config
+
 _Singleton module for configuration and initialization of application wide
 configuration objects._
 
