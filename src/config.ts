@@ -1,6 +1,4 @@
-export class Config {
-
-}
+export class Config {}
 // const { argValidator: _argValidator } = require('@vamship/arg-utils');
 // const _rc = require('rc');
 // const { deepDefaults } = require('./deep-defaults');

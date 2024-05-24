@@ -63,7 +63,7 @@
     },
     "homepage": "https://github.com/vamship/config#readme",
     "buildMetadata": {
-        "projectType": "lib",
+        "type": "lib",
         "language": "ts"
     }
 }
