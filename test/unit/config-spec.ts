@@ -392,6 +392,9 @@ describe('Config', function () {
             ];
             const { loaders } = addLoaders(instance, 3, false);
             const { parser } = _setParser(instance);
+            const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
+
+            instance.setSchema(schema);
 
             loaders.forEach((loader, index) =>
                 loader.resolves([configValues[index]]),
@@ -402,7 +405,7 @@ describe('Config', function () {
             await instance.initialize();
 
             expect(parser).to.have.been.calledOnce;
-            expect(parser.firstCall.args).to.deep.equal([configValues]);
+            expect(parser.firstCall.args).to.deep.equal([configValues, schema]);
         });
 
         it('should fail if the parser throws an error', async function () {
@@ -481,7 +484,8 @@ describe('Config', function () {
                 createSchemaCheckerMock.stub,
             ).to.have.been.calledOnceWithExactly(schema, errorMessage);
             expect(checkSchemaMock).to.have.been.calledOnceWithExactly(
-                configData, true
+                configData,
+                true,
             );
         });
 

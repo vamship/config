@@ -83,7 +83,7 @@ export class Config<T> {
         }
 
         // Parse config data
-        const config = await parser(configValues);
+        const config = await parser(configValues, this._schema);
         _argValidator.checkObject(
             config,
             new Error(
