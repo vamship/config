@@ -1,173 +1,191 @@
-export class Config {}
-// const { argValidator: _argValidator } = require('@vamship/arg-utils');
-// const _rc = require('rc');
-// const { deepDefaults } = require('./deep-defaults');
-// const AppConfig = require('./app-config');
+import {
+    argValidator as _argValidator,
+    schemaHelper as _schemaHelper,
+} from '@vamship/arg-utils';
+import { JSONSchemaType } from 'ajv';
 
-// const DEFAULT_APP_SCOPE = 'default';
-// const _configCache = {};
-// let _applicationScope = DEFAULT_APP_SCOPE;
-// let _config = {};
-// let _isInitialized = false;
+/**
+ * Loader function that loads configuration data from a source and returns it as
+ * collection of key/value pairs.
+ *
+ * @returns A promise that resolves with a collection of key/value pairs that
+ * represent raw configuration data loaded from a source.
+ */
+export type ConfigLoader = () => Promise<Record<string, unknown>[]>;
 
-// /**
-//  * Utility module that allows the initialization and loading of an environment
-//  * specific application configuration. Environments refer to strings that
-//  * logically distinguish between multiple execution contexts. These could
-//  * be the traditional <strong>'dev'</strong>, <strong>'qa'</strong>, and
-//  * <strong>'prod'</strong> identifiers, or could be an identifier for a
-//  * specific version (when mulitple concurrent versions of an app are supported).
-//  * The meaning of these environment strings are left to the end user.
-//  *
-//  * <p>
-//  * The Current implementation of this module uses the
-//  * [rc package]{@link https://www.npmjs.com/package/rc} to load configuration,
-//  * and supports configuration values in files and environment variables.
-//  * </p>
-//  *
-//  * @example
-//  * <caption>
-//  * Application configuration stored in files must have the following structure:
-//  * </caption>
-//  *
-//  * {
-//  *    "default": {
-//  *      // Default application configuration goes here. These values will
-//  *      // be used if no environment specific values are provided
-//  *      "host": "dev.example.com",
-//  *      "log": {
-//  *        "level": "error"
-//  *      }
-//  *    },
-//  *    "dev": {
-//  *      // Overrides specific to the environment "dev" can be specified here
-//  *      "log": {
-//  *        "level": "debug"
-//  *      }
-//  *    },
-//  *    "prod": {
-//  *      // Overrides specific to the environment "prod" can be specified here
-//  *      "host": "prod.example.com"
-//  *    }
-//  * }
-//  *
-//  * @example
-//  * <caption>
-//  * If environment variables are used to specify config values, they must be
-//  * named as follows, assuming that the application is called "myApp". For more
-//  * information, see the
-//  * [rc standards]{@link https://www.npmjs.com/package/rc#standards}
-//  * documentation.
-//  * </caption>
-//  *
-//  * export myApp_default__host='dev.example.com'
-//  * export myApp_default__log__level='info'
-//  * export myApp_dev__log__level='debug'
-//  * export myApp_prod__host='prod.example.com'
-//  *
-//  * @module config
-//  */
-// module.exports = {
-//     /**
-//      * Configures global configuration settings, include application name, and
-//      * initial default values for the configuration. This method must be invoked
-//      * before any calls to
-//      * [getConfig()]{@link module:config.getConfig} in order to ensure that
-//      * configuration objects are configured correctly.
-//      *
-//      * <p>
-//      * Note that invoking this method multiple times could change the reference
-//      * to the config object returned via a call to the
-//      * [getConfig()]{@link module:config.getConfig} method.
-//      * </p>
-//      *
-//      * @param {String} name The application name to use when loading up the
-//      *        configuration data. See
-//      *        [rc standards]{@link https://www.npmjs.com/package/rc#standards}
-//      *        for more information on the naming and placement of application
-//      *        configuration files.
-//      * @param {Object} [defaults={}] The default configuration properties to
-//      *        initialize the config with.
-//      *
-//      * @return {module:config} A reference to the current module, allowing for
-//      *         chaining of method calls.
-//      */
-//     configure: function (name, defaults) {
-//         _argValidator.checkString(name, 1, 'Invalid appName (arg #1)');
-//         if (!_argValidator.checkObject(defaults)) {
-//             defaults = {};
-//         }
+/**
+ * Parser function that takes a collection of key/value pairs and returns a
+ * config object of a specific type.
+ *
+ * @param T The type of the config object that the parser function will return.
+ * @param properties A collection of key/value pairs that represent raw
+ * configuration data loaded by the loader.
+ *
+ * @returns A promise that resolves when the parser has completed parsing raw
+ * configuration data and populating the config object.
+ */
+export type ConfigParser<T> = (
+    properties: Record<string, unknown>[],
+) => Promise<T>;
 
-//         if (!_isInitialized) {
-//             _config = _rc(name, defaults);
-//             _isInitialized = true;
-//         }
+/**
+ * Represents the configuration settings for the application.
+ */
+export class Config<T> {
+    private _isInitialized: boolean;
+    private _config?: T;
+    private _loaders: ConfigLoader[];
+    private _parser?: ConfigParser<T>;
+    private _schema?: JSONSchemaType<T>;
 
-//         // Reference to the current module.
-//         return module.exports;
-//     },
+    /**
+     * Initializes the configuration object with default properties.
+     */
+    constructor() {
+        this._isInitialized = false;
+        this._loaders = [];
+        this._parser = undefined;
+        this._config = undefined;
+        this._schema = undefined;
+    }
 
-//     /**
-//      * Returns the current default scope for the application. This represents
-//      * the default scope value that will be used in calls to
-//      * [getConfig()]{@link module:config.getConfig}. If not explicitly
-//      * overridden, this method will always return "default".
-//      *
-//      * @return {String} The default scope that the config object will use.
-//      */
-//     getApplicationScope: function (scope) {
-//         return _applicationScope;
-//     },
+    /**
+     * Initializes the application configuration, running it through a series of
+     * steps including - loading properties, parsing values, and validating the
+     * final set of properties.
+     */
+    async initialize(): Promise<void> {
+        if (this._isInitialized) {
+            return;
+        }
 
-//     /**
-//      * Sets the scope for the application. This value will be used as the
-//      * default arg for
-//      * [getConfig()]{@link module:config.getConfig}. If this method is never
-//      * invoked, the value of the default scope will be "default".
-//      *
-//      * @param {String} scope The default scope to assign to the config.
-//      *
-//      * @return {module:config} A reference to the current module, allowing for
-//      *         chaining of method calls.
-//      */
-//     setApplicationScope: function (scope) {
-//         _argValidator.checkString(scope, 1, 'Invalid scope (arg #1)');
-//         _applicationScope = scope;
-//         return module.exports;
-//     },
+        if (typeof this._parser === 'undefined') {
+            throw new Error(
+                'Cannot initialize config - parser has not been set',
+            );
+        }
 
-//     /**
-//      * Returns a configuration object that is scoped to a specific environment.
-//      * This configuration object will return default application configuration
-//      * properties, overridden by environment speicific values.
-//      *
-//      * @param {String} [scope=<default scope>] The name of the environment for
-//      *        which the application configuration object will be returned.  If
-//      *        omitted, this value will be defaulted to the environment
-//      *        set by invoking
-//      *        [setAppScope()]{@link module:config.setAppScope}. If this
-//      *        method was never invoked, the default scope is "default".
-//      *
-//      * @return {AppConfig} A configuration object that can be used to query for
-//      *         configuration parameters.
-//      */
-//     getConfig: function (scope) {
-//         if (!_argValidator.checkString(scope)) {
-//             scope = _applicationScope;
-//         }
+        const parser: ConfigParser<T> = this._parser;
 
-//         let config = _configCache[scope];
-//         if (!config) {
-//             const data = deepDefaults(
-//                 deepDefaults({}, _config[scope]),
-//                 _config.default
-//             );
-//             config = new AppConfig(data);
-//             if (_isInitialized) {
-//                 _configCache[scope] = config;
-//             }
-//         }
+        // Load config data
+        const configValues: Record<string, unknown>[] = [];
+        for (const loader of this._loaders) {
+            const values = await loader();
+            _argValidator.checkArray(
+                values,
+                new Error(
+                    'Invalid config data received from loader.' +
+                        'The loader must return an array of key/value pairs',
+                ),
+            );
+            values.forEach((value) => configValues.push(value));
+        }
 
-//         return config;
-//     },
-// };
+        // Parse config data
+        const config = await parser(configValues);
+        _argValidator.checkObject(
+            config,
+            new Error(
+                'Invalid config data returned by parser. ' +
+                    'The parser must return an object',
+            ),
+        );
+
+        // Validate config data against schema
+        if (typeof this._schema !== 'undefined') {
+            const checker = _schemaHelper.createSchemaChecker(
+                this._schema,
+                'Error validating config schema',
+            );
+            checker(config, true);
+        }
+
+        // Set config data as an accessible property
+        this._config = config;
+        this._isInitialized = true;
+    }
+
+    /**
+     * Adds a loader function to the configuration object.
+     *
+     * @param loader A loader function that loads configuration data from some
+     * source and returns it as a collection of key/value pairs.
+     *
+     * @returns A reference to the current configuration object, allowing for
+     * chaining of method calls.
+     */
+    addLoader(loader: ConfigLoader): Config<T> {
+        _argValidator.checkFunction(loader, 'Invalid loader (arg #1)');
+        if (this._isInitialized) {
+            throw new Error(
+                'Cannot add loader after configuration is initialized',
+            );
+        }
+        this._loaders.push(loader);
+
+        return this;
+    }
+
+    /**
+     * Sets the parser for the configuration object.
+     *
+     * @param parser A parser function that accepts a collection of key value
+     * pairs and populates a config data object.
+     *
+     * @returns A reference to the current configuration object, allowing for
+     * chaining of method calls.
+     */
+    setParser(parser: ConfigParser<T>): Config<T> {
+        _argValidator.checkFunction(parser, 'Invalid parser (arg #1)');
+        if (this._isInitialized) {
+            throw new Error(
+                'Cannot set parser after configuration is initialized',
+            );
+        }
+        this._parser = parser;
+
+        return this;
+    }
+
+    /**
+     * Sets the schema for the configuration object.
+     *
+     * @param schema A JSON schema that describes the expected structure of the
+     * config object.
+     *
+     * @returns A reference to the current configuration object, allowing for
+     * chaining of method calls.
+     */
+    setSchema(schema: JSONSchemaType<T>): Config<T> {
+        _argValidator.checkObject(schema, 'Invalid schema (arg #1)');
+        if (this._isInitialized) {
+            throw new Error(
+                'Cannot set schema after configuration is initialized',
+            );
+        }
+        this._schema = schema;
+
+        return this;
+    }
+
+    /**
+     * Determines whether or not the configuration object has been
+     * initialized. Values cannot be read from the configuration object until
+     * it has been initialized.
+     */
+    get isInitialized(): boolean {
+        return this._isInitialized;
+    }
+
+    /**
+     * Returns the configuration object for the application.
+     */
+    get data(): T {
+        if (!this._isInitialized) {
+            throw new Error(
+                'Cannot access data before configuration is initialized',
+            );
+        }
+        return this._config as T;
+    }
+}
