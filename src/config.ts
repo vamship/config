@@ -26,6 +26,7 @@ export type ConfigLoader = () => Promise<Record<string, unknown>[]>;
  */
 export type ConfigParser<T> = (
     properties: Record<string, unknown>[],
+    schema?: JSONSchemaType<T>,
 ) => Promise<T>;
 
 /**
