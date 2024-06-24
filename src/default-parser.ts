@@ -49,7 +49,7 @@ export async function defaultParser<T>(
     }, {});
 
     if (typeof schema !== 'undefined') {
-        const ajv = new Ajv({ coerceTypes: 'array' });
+        const ajv = new Ajv({ coerceTypes: 'array', removeAdditional: true });
         ajv.compile(schema)(config) as T;
     }
     return config as T;

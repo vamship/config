@@ -79,6 +79,88 @@ describe('defaultParser()', function () {
         };
     };
 
+    function createDummyConfigSchema(
+        removeAdditional = false,
+    ): JSONSchemaType<DummyConfig> {
+        const schema: JSONSchemaType<DummyConfig> = {
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            type: 'object',
+            properties: {
+                cfg: {
+                    type: 'object',
+                    properties: {
+                        str: {
+                            type: 'object',
+                            properties: {
+                                str: { type: 'string' },
+                                num: { type: 'number' },
+                                bool: { type: 'boolean' },
+                                arr: {
+                                    type: 'array',
+                                    items: { type: 'number' },
+                                },
+                            },
+                            required: ['str', 'num', 'bool', 'arr'],
+                        },
+                        num: {
+                            type: 'object',
+                            properties: {
+                                str: { type: 'string' },
+                                num: { type: 'number' },
+                                bool: { type: 'boolean' },
+                                arr: {
+                                    type: 'array',
+                                    items: { type: 'number' },
+                                },
+                            },
+                            required: ['str', 'num', 'bool', 'arr'],
+                        },
+                        bool: {
+                            type: 'object',
+                            properties: {
+                                str: { type: 'string' },
+                                num: { type: 'number' },
+                                bool: { type: 'boolean' },
+                                arr: {
+                                    type: 'array',
+                                    items: { type: 'number' },
+                                },
+                            },
+                            required: ['str', 'num', 'bool', 'arr'],
+                        },
+                        arr: {
+                            type: 'object',
+                            properties: {
+                                str: { type: 'string' },
+                                num: { type: 'number' },
+                                bool: { type: 'boolean' },
+                                arr: {
+                                    type: 'array',
+                                    items: { type: 'number' },
+                                },
+                            },
+                            required: ['str', 'num', 'bool', 'arr'],
+                        },
+                    },
+                    required: ['str', 'num', 'bool', 'arr'],
+                },
+            },
+            required: ['cfg'],
+        };
+
+        if (removeAdditional) {
+            schema.additionalProperties = false;
+            schema.properties!.cfg.additionalProperties = false;
+            schema.properties!.cfg.properties!.str.additionalProperties = false;
+            schema.properties!.cfg.properties!.num.additionalProperties = false;
+            schema.properties!.cfg.properties!.bool.additionalProperties =
+                false;
+            schema.properties!.cfg.properties!.arr.additionalProperties = false;
+        }
+
+        return schema;
+    }
+
     function createRawConfig(): Record<string, unknown>[] {
         return [
             { 'cfg.str.str': '42' },
@@ -247,74 +329,50 @@ describe('defaultParser()', function () {
 
     it('should coerce values to the correct types if a schema is provided', async function () {
         const { testTarget } = await _import<DummyConfig>();
-        const schema: JSONSchemaType<DummyConfig> = {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            additionalProperties: false,
-            type: 'object',
-            properties: {
-                cfg: {
-                    type: 'object',
-                    properties: {
-                        str: {
-                            type: 'object',
-                            properties: {
-                                str: { type: 'string' },
-                                num: { type: 'number' },
-                                bool: { type: 'boolean' },
-                                arr: {
-                                    type: 'array',
-                                    items: { type: 'number' },
-                                },
-                            },
-                            required: ['str', 'num', 'bool', 'arr'],
-                        },
-                        num: {
-                            type: 'object',
-                            properties: {
-                                str: { type: 'string' },
-                                num: { type: 'number' },
-                                bool: { type: 'boolean' },
-                                arr: {
-                                    type: 'array',
-                                    items: { type: 'number' },
-                                },
-                            },
-                            required: ['str', 'num', 'bool', 'arr'],
-                        },
-                        bool: {
-                            type: 'object',
-                            properties: {
-                                str: { type: 'string' },
-                                num: { type: 'number' },
-                                bool: { type: 'boolean' },
-                                arr: {
-                                    type: 'array',
-                                    items: { type: 'number' },
-                                },
-                            },
-                            required: ['str', 'num', 'bool', 'arr'],
-                        },
-                        arr: {
-                            type: 'object',
-                            properties: {
-                                str: { type: 'string' },
-                                num: { type: 'number' },
-                                bool: { type: 'boolean' },
-                                arr: {
-                                    type: 'array',
-                                    items: { type: 'number' },
-                                },
-                            },
-                            required: ['str', 'num', 'bool', 'arr'],
-                        },
-                    },
-                    required: ['str', 'num', 'bool', 'arr'],
+        const properties: Record<string, unknown>[] = createRawConfig();
+        const schema: JSONSchemaType<DummyConfig> = createDummyConfigSchema();
+
+        const result = await testTarget(properties, schema);
+
+        expect(result).to.deep.equal({
+            cfg: {
+                str: {
+                    str: '42',
+                    num: 42,
+                    bool: false,
+                    arr: [123],
+                },
+                num: {
+                    str: '42',
+                    num: 42,
+                    bool: false,
+                    arr: [123],
+                },
+                bool: {
+                    str: 'false',
+                    num: 0,
+                    bool: false,
+                    arr: [1],
+                },
+                arr: {
+                    str: 'foo',
+                    num: 42,
+                    bool: false,
+                    arr: [123],
                 },
             },
-            required: ['cfg'],
-        };
+        });
+    });
 
+    it('should remove additional properties from the object if the schema specifies it', async function () {
+        const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = createRawConfig();
+        const schema: JSONSchemaType<DummyConfig> = createDummyConfigSchema(true);
+
+        properties.push({ 'cfg.foo.bar': 1234 });
+        properties.push({ 'cfg.foo.baz': 1234 });
+        properties.push({ 'cfg.foo.quuz': 1234 });
+        properties.push({ 'cfg.foo.chaz': 1234 });
         const result = await testTarget(properties, schema);
 
         expect(result).to.deep.equal({
