@@ -37,8 +37,8 @@ export async function defaultParser<T>(
     if (!_argValidator.checkArray(properties)) {
         throw new Error('Invalid config properties (arg #1)');
     }
-    if (typeof schema !== 'undefined' && !_argValidator.checkObject(schema)) {
-        throw new Error('Invalid schema (arg #2)');
+    if (typeof schema !== 'undefined') {
+        _argValidator.checkObject(schema, 'Invalid schema (arg #2)');
     }
 
     const config = properties.reduce((result, record) => {

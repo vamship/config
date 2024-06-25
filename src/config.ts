@@ -128,11 +128,11 @@ export class Config<T> {
      */
     addLoader(loader: ConfigLoader, addToStart = false): Config<T> {
         _argValidator.checkFunction(loader, 'Invalid loader (arg #1)');
-        if (
-            typeof addToStart !== 'undefined' &&
-            !_argValidator.checkBoolean(addToStart)
-        ) {
-            throw new Error('Invalid addToStart flag (arg #2)');
+        if (typeof addToStart !== 'undefined') {
+            _argValidator.checkBoolean(
+                addToStart,
+                'Invalid addToStart flag (arg #2)',
+            );
         }
 
         if (this._isInitialized) {
