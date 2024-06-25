@@ -22,7 +22,7 @@ import _camelCase from 'camelcase';
  * @returns A promise that resolves with a collection of key/value pairs that
  * represent raw configuration data loaded from the environment.
  */
-export function createEnvLoader<T>(prefix = ''): ConfigLoader {
+export function createEnvLoader(prefix = ''): ConfigLoader {
     if (typeof prefix !== 'undefined') {
         _argValidator.checkString(prefix, 0, 'Invalid prefix (arg #1)');
     }

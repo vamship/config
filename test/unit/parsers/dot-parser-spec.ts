@@ -14,7 +14,6 @@ import {
 import _esmock from 'esmock';
 
 import { ConfigParser } from '../../../src/config.js';
-import { dotParser } from '../../../src/parsers/dot-parser.js';
 
 describe('dotParser()', function () {
     type ImportResult<T> = {
@@ -234,10 +233,12 @@ describe('dotParser()', function () {
 
     _testValues.allButArray().forEach((value) => {
         it(`should throw an error if invoked without a valid array of properties (value=${value})`, async function () {
-            const { testTarget } = await _import<{}>();
+            const { testTarget } = await _import<DummyConfig>();
             const error = 'Invalid config properties (arg #1)';
             const properties = value as unknown as Record<string, unknown>[];
-            const schema: JSONSchemaType<{}> = { type: 'object' };
+            const schema: JSONSchemaType<DummyConfig> = {
+                type: 'object',
+            } as JSONSchemaType<DummyConfig>;
 
             await expect(testTarget(properties, schema)).to.be.rejectedWith(
                 error,
@@ -247,9 +248,9 @@ describe('dotParser()', function () {
 
     _testValues.allButSelected('object', 'undefined').forEach((value) => {
         it(`should throw an error if a schema is specified but is not valid (value=${value})`, async function () {
-            const { testTarget } = await _import<{}>();
+            const { testTarget } = await _import<DummyConfig>();
             const error = 'Invalid schema (arg #2)';
-            const schema = value as unknown as JSONSchemaType<{}>;
+            const schema = value as unknown as JSONSchemaType<DummyConfig>;
             const properties: Record<string, unknown>[] = [];
 
             await expect(testTarget(properties, schema)).to.be.rejectedWith(
@@ -259,7 +260,7 @@ describe('dotParser()', function () {
     });
 
     it('should return a promise that resolves with an empty object if invoked with an empty array', async function () {
-        const { testTarget } = await _import<{}>();
+        const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = [];
 
         const result = await testTarget(properties);
@@ -267,7 +268,7 @@ describe('dotParser()', function () {
     });
 
     it('should map each record in the input array to a corresponding record in the output object', async function () {
-        const { testTarget } = await _import<{}>();
+        const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = [
             { foo: 42 },
             { bar: 'baz' },
@@ -278,7 +279,7 @@ describe('dotParser()', function () {
     });
 
     it('should create nested objects for keys that contain dots', async function () {
-        const { testTarget } = await _import<{}>();
+        const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = [
             { 'foo.bar.baz': 42, 'foo.chaz': 'chaz' },
             { 'foo.bar.qux': 'quux' },
@@ -297,7 +298,7 @@ describe('dotParser()', function () {
     });
 
     it('should overwrite values for items that have the same keys', async function () {
-        const { testTarget } = await _import<{}>();
+        const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = [
             { 'foo.bar.baz': 42, 'foo.chaz': 'chaz' },
             { 'foo.bar.qux': 'quux', 'foo.chaz': 'jazz' },
@@ -317,8 +318,6 @@ describe('dotParser()', function () {
 
     it('should not attempt coercion if no schema is provided', async function () {
         const { testTarget } = await _import<DummyConfigUncoerced>();
-        const schema: JSONSchemaType<DummyConfigUncoerced> | undefined =
-            undefined;
         const properties = createRawConfig();
 
         const result = await testTarget(properties);

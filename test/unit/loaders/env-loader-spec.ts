@@ -1,5 +1,4 @@
 import { expect, use as _useWithChai } from 'chai';
-import { JSONSchemaType } from 'ajv';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinonChai from 'sinon-chai';
 import 'mocha';
@@ -14,7 +13,6 @@ import {
 import _esmock from 'esmock';
 
 import { ConfigLoader } from '../../../src/config';
-import { createEnvLoader } from '../../../src/loaders/env-loader.js';
 
 describe('createEnvLoader()', function () {
     type ImportResult = {
@@ -64,8 +62,8 @@ describe('createEnvLoader()', function () {
     ['', 'foo', 'bar'].forEach((value) => {
         it(`should return a function when invoked with a valid prefix (value=${value})`, async function () {
             const { testTarget } = await _import();
-            const loader = testTarget();
             const prefix = value as unknown as string;
+            const loader = testTarget(prefix);
 
             expect(loader).to.be.a('function');
         });

@@ -111,7 +111,8 @@ describe('Config', function () {
 
     describe('ctor()', async function () {
         it('should return an instance initialized with defaults', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
 
             expect(instance.isInitialized).to.be.false;
             expect(instancePrivate._loaders).to.deep.equal([]);
@@ -123,7 +124,7 @@ describe('Config', function () {
     describe('addLoader()', async function () {
         _testValues.allButFunction().forEach((value) => {
             it(`should throw an error if invoked with an invalid loader (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
+                const { instance } = await _createInstance<DummyConfig>();
                 const loader = value as unknown as ConfigLoader;
                 const addToStart = undefined;
                 const wrapper = () => instance.addLoader(loader, addToStart);
@@ -135,7 +136,7 @@ describe('Config', function () {
 
         _testValues.allButSelected('boolean', 'undefined').forEach((value) => {
             it(`should throw an error if a addToStart flag is specified but is invalid (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
+                const { instance } = await _createInstance<DummyConfig>();
                 const loader = async () => [];
                 const addToStart = value as unknown as boolean;
                 const wrapper = () => instance.addLoader(loader, addToStart);
@@ -146,7 +147,7 @@ describe('Config', function () {
         });
 
         it('should throw an error if called after initialization', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
             const loader = async () => [];
             const wrapper = () => instance.addLoader(loader);
             const error =
@@ -160,7 +161,8 @@ describe('Config', function () {
         });
 
         it('should add the loader to the end of the list of loaders (addToStart=undefined)', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
             const loader = async () => [];
             const loader2 = async () => [];
 
@@ -172,7 +174,8 @@ describe('Config', function () {
         });
 
         it('should add the loader to the end of the list of loaders (addToStart=false)', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
             const loader = async () => [];
             const loader2 = async () => [];
 
@@ -184,7 +187,8 @@ describe('Config', function () {
         });
 
         it('should add the loader to tne start of the list of loaders (addToStart=false)', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
             const loader = async () => [];
             const loader2 = async () => [];
 
@@ -196,7 +200,7 @@ describe('Config', function () {
         });
 
         it('should return the instance to support chaining', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
             const loader = async () => [];
             const result = instance.addLoader(loader);
 
@@ -207,8 +211,8 @@ describe('Config', function () {
     describe('setParser()', async function () {
         _testValues.allButFunction().forEach((value) => {
             it(`should throw an error if invoked with an invalid parser (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
-                const parser = value as unknown as ConfigParser<{}>;
+                const { instance } = await _createInstance<DummyConfig>();
+                const parser = value as unknown as ConfigParser<DummyConfig>;
                 const wrapper = () => instance.setParser(parser);
                 const error = 'Invalid parser (arg #1)';
 
@@ -217,8 +221,8 @@ describe('Config', function () {
         });
 
         it('should throw an error if called after initialization', async function () {
-            const { instance } = await _createInstance<{}>();
-            const parser = async () => ({});
+            const { instance } = await _createInstance<DummyConfig>();
+            const parser = async () => ({} as DummyConfig);
             const wrapper = () => instance.setParser(parser);
             const error =
                 'Cannot set parser after configuration is initialized';
@@ -231,22 +235,23 @@ describe('Config', function () {
         });
 
         it('should update the current parser with the specified value', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
 
             expect(instancePrivate._parser).to.be.undefined;
 
-            const parser = async () => ({});
+            const parser = async () => ({} as DummyConfig);
             instance.setParser(parser);
             expect(instancePrivate._parser).to.equal(parser);
 
-            const newParser = async () => ({});
+            const newParser = async () => ({} as DummyConfig);
             instance.setParser(newParser);
             expect(instancePrivate._parser).to.deep.equal(newParser);
         });
 
         it('should return the instance to support chaining', async function () {
-            const { instance } = await _createInstance<{}>();
-            const parser = async () => ({});
+            const { instance } = await _createInstance<DummyConfig>();
+            const parser = async () => ({} as DummyConfig);
             const result = instance.setParser(parser);
 
             expect(result).to.equal(instance);
@@ -256,8 +261,8 @@ describe('Config', function () {
     describe('setSchema()', async function () {
         _testValues.allButObject().forEach((value) => {
             it(`should throw an error if invoked with an invalid schema (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
-                const schema = value as unknown as JSONSchemaType<{}>;
+                const { instance } = await _createInstance<DummyConfig>();
+                const schema = value as unknown as JSONSchemaType<DummyConfig>;
                 const wrapper = () => instance.setSchema(schema);
                 const error = 'Invalid schema (arg #1)';
 
@@ -266,10 +271,10 @@ describe('Config', function () {
         });
 
         it('should throw an error if called after initialization', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
             _setParser(instance);
 
-            const schema = { type: 'object' } as JSONSchemaType<{}>;
+            const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
             const wrapper = () => instance.setSchema(schema);
             const error =
                 'Cannot set schema after configuration is initialized';
@@ -280,22 +285,23 @@ describe('Config', function () {
         });
 
         it('should update the current schema with the specified value', async function () {
-            const { instance, instancePrivate } = await _createInstance<{}>();
+            const { instance, instancePrivate } =
+                await _createInstance<DummyConfig>();
 
             expect(instancePrivate._schema).to.be.undefined;
 
-            const schema = { type: 'object' } as JSONSchemaType<{}>;
+            const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
             instance.setSchema(schema);
             expect(instancePrivate._schema).to.equal(schema);
 
-            const newSchema = { type: 'object' } as JSONSchemaType<{}>;
+            const newSchema = { type: 'object' } as JSONSchemaType<DummyConfig>;
             instance.setSchema(newSchema);
             expect(instancePrivate._schema).to.deep.equal(newSchema);
         });
 
         it('should return the instance to support chaining', async function () {
-            const { instance } = await _createInstance<{}>();
-            const schema = { type: 'object' } as JSONSchemaType<{}>;
+            const { instance } = await _createInstance<DummyConfig>();
+            const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
             const result = instance.setSchema(schema);
 
             expect(result).to.equal(instance);
@@ -304,7 +310,7 @@ describe('Config', function () {
 
     describe('data', async function () {
         it('should throw an error if accessed before initialization', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
             const wrapper = () => instance.data;
             const error =
                 'Cannot access data before configuration is initialized';
@@ -313,9 +319,9 @@ describe('Config', function () {
         });
 
         it('should return an empty object if initialized with no data', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
 
-            instance.setParser(async () => ({}));
+            instance.setParser(async () => ({} as DummyConfig));
 
             await instance.initialize();
 
@@ -324,7 +330,7 @@ describe('Config', function () {
     });
 
     describe('initialize()', async function () {
-        function addLoaders<T>(
+        function _addLoaders<T>(
             instance: Config<T>,
             count = 3,
             autoResolve = true,
@@ -343,7 +349,7 @@ describe('Config', function () {
         }
 
         it('should reject the promize if a parser has not been set', async function () {
-            const { instance } = await _createInstance<{}>();
+            const { instance } = await _createInstance<DummyConfig>();
             const error = 'Cannot initialize config - parser has not been set';
 
             await expect(instance.initialize()).to.be.rejectedWith(error);
@@ -351,7 +357,7 @@ describe('Config', function () {
 
         it('should set the initialized flag to true', async function () {
             const { testTarget } = await _import();
-            const instance = new testTarget<{}>();
+            const instance = new testTarget<DummyConfig>();
 
             _setParser(instance);
 
@@ -360,8 +366,8 @@ describe('Config', function () {
         });
 
         it('should invoke each loader in the order they were added', async function () {
-            const { instance } = await _createInstance<{}>();
-            const { loaders } = addLoaders(instance, 3);
+            const { instance } = await _createInstance<DummyConfig>();
+            const { loaders } = _addLoaders(instance, 3);
 
             _setParser(instance);
 
@@ -376,8 +382,8 @@ describe('Config', function () {
         });
 
         it('should throw an error if any loader fails', async function () {
-            const { instance } = await _createInstance<{}>();
-            const { loaders } = addLoaders(instance, 3, false);
+            const { instance } = await _createInstance<DummyConfig>();
+            const { loaders } = _addLoaders(instance, 3, false);
             const error = 'Loader failed';
 
             _setParser(instance);
@@ -395,8 +401,8 @@ describe('Config', function () {
 
         _testValues.allButArray().forEach((value) => {
             it(`should throw an error if the loader returns a non-array value (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
-                const { loaders } = addLoaders(instance, 3, false);
+                const { instance } = await _createInstance<DummyConfig>();
+                const { loaders } = _addLoaders(instance, 3, false);
                 const error =
                     'Invalid config data received from loader.' +
                     'The loader must return an array of key/value pairs';
@@ -428,7 +434,7 @@ describe('Config', function () {
                     key3: 'value3',
                 },
             ];
-            const { loaders } = addLoaders(instance, 3, false);
+            const { loaders } = _addLoaders(instance, 3, false);
             const { parser } = _setParser(instance);
             const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
 
@@ -448,9 +454,9 @@ describe('Config', function () {
 
         it('should fail if the parser throws an error', async function () {
             const { instance } = await _createInstance<DummyConfig>();
-            const { loaders } = addLoaders(instance, 3);
             const error = 'Parser failed';
 
+            _addLoaders(instance, 3);
             _setParser(instance);
 
             instance.setParser(async () => {
@@ -462,8 +468,8 @@ describe('Config', function () {
 
         _testValues.allButObject().forEach((value) => {
             it(`should throw an error if the parser returns a non-object value (value=${value})`, async function () {
-                const { instance } = await _createInstance<{}>();
-                const { loaders } = addLoaders(instance, 3);
+                const { instance } = await _createInstance<DummyConfig>();
+                _addLoaders(instance, 3);
                 const { parser } = _setParser(instance, false);
                 const error =
                     'Invalid config data returned by parser. ' +
@@ -477,9 +483,10 @@ describe('Config', function () {
 
         it('should skip schema validation if no schema is set', async function () {
             const { instance, schemaHelperMock, checkSchemaMock } =
-                await _createInstance<{}>();
-            const { loaders } = addLoaders(instance, 3);
-            const { parser } = _setParser(instance);
+                await _createInstance<DummyConfig>();
+
+            _addLoaders(instance, 3);
+            _setParser(instance);
 
             const createSchemaCheckerMock =
                 schemaHelperMock.mocks.createSchemaChecker;
@@ -495,16 +502,17 @@ describe('Config', function () {
 
         it('should validate the parsed data against the schema if a schema is set', async function () {
             const { instance, schemaHelperMock, checkSchemaMock } =
-                await _createInstance<{}>();
+                await _createInstance<DummyConfig>();
             const configData = {
                 key1: 'value1',
                 key2: 'value2',
                 key3: 'value3',
             };
-            const { loaders } = addLoaders(instance, 3);
-            const { parser } = _setParser(instance, false);
-            const schema = { type: 'object' } as JSONSchemaType<{}>;
+            const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
             const errorMessage = 'Error validating config schema';
+
+            _addLoaders(instance, 3);
+            const { parser } = _setParser(instance, false);
 
             parser.resolves(configData);
 
@@ -534,9 +542,9 @@ describe('Config', function () {
                 key2: 'value2',
                 key3: 'value3',
             };
-            const { loaders } = addLoaders(instance, 3);
             const { parser } = _setParser(instance, false);
 
+            _addLoaders(instance, 3);
             parser.resolves(configData);
 
             await instance.initialize();
@@ -546,7 +554,7 @@ describe('Config', function () {
 
         it('should set the initialized flag to true', async function () {
             const { testTarget } = await _import();
-            const instance = new testTarget<{}>();
+            const instance = new testTarget<DummyConfig>();
 
             _setParser(instance);
 
@@ -555,8 +563,8 @@ describe('Config', function () {
         });
 
         it('should do nothing if the instance is already initialized', async function () {
-            const { instance } = await _createInstance<{}>();
-            const { loaders } = addLoaders(instance, 3);
+            const { instance } = await _createInstance<DummyConfig>();
+            const { loaders } = _addLoaders(instance, 3);
 
             _setParser(instance);
 

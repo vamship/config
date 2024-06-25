@@ -1,6 +1,6 @@
 import { argValidator as _argValidator } from '@vamship/arg-utils';
 import { JSONSchemaType } from 'ajv';
-import { getProperty, setProperty, hasProperty } from 'dot-prop';
+import { setProperty } from 'dot-prop';
 import { Ajv } from 'ajv';
 
 /**
