@@ -125,8 +125,21 @@ describe('Config', function () {
             it(`should throw an error if invoked with an invalid loader (value=${value})`, async function () {
                 const { instance } = await _createInstance<{}>();
                 const loader = value as unknown as ConfigLoader;
-                const wrapper = () => instance.addLoader(loader);
+                const addToStart = undefined;
+                const wrapper = () => instance.addLoader(loader, addToStart);
                 const error = 'Invalid loader (arg #1)';
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        _testValues.allButSelected('boolean', 'undefined').forEach((value) => {
+            it(`should throw an error if a addToStart flag is specified but is invalid (value=${value})`, async function () {
+                const { instance } = await _createInstance<{}>();
+                const loader = async () => [];
+                const addToStart = value as unknown as boolean;
+                const wrapper = () => instance.addLoader(loader, addToStart);
+                const error = 'Invalid addToStart flag (arg #2)';
 
                 expect(wrapper).to.throw(error);
             });
@@ -146,15 +159,40 @@ describe('Config', function () {
             expect(wrapper).to.throw(error);
         });
 
-        it('should add the loader to the list of loaders', async function () {
+        it('should add the loader to the end of the list of loaders (addToStart=undefined)', async function () {
             const { instance, instancePrivate } = await _createInstance<{}>();
             const loader = async () => [];
+            const loader2 = async () => [];
 
-            instance.addLoader(loader);
+            instance.addLoader(loader, undefined);
             expect(instancePrivate._loaders).to.deep.equal([loader]);
 
-            instance.addLoader(loader);
-            expect(instancePrivate._loaders).to.deep.equal([loader, loader]);
+            instance.addLoader(loader2, undefined);
+            expect(instancePrivate._loaders).to.deep.equal([loader, loader2]);
+        });
+
+        it('should add the loader to the end of the list of loaders (addToStart=false)', async function () {
+            const { instance, instancePrivate } = await _createInstance<{}>();
+            const loader = async () => [];
+            const loader2 = async () => [];
+
+            instance.addLoader(loader, false);
+            expect(instancePrivate._loaders).to.deep.equal([loader]);
+
+            instance.addLoader(loader2, false);
+            expect(instancePrivate._loaders).to.deep.equal([loader, loader2]);
+        });
+
+        it('should add the loader to tne start of the list of loaders (addToStart=false)', async function () {
+            const { instance, instancePrivate } = await _createInstance<{}>();
+            const loader = async () => [];
+            const loader2 = async () => [];
+
+            instance.addLoader(loader, true);
+            expect(instancePrivate._loaders).to.deep.equal([loader]);
+
+            instance.addLoader(loader2, true);
+            expect(instancePrivate._loaders).to.deep.equal([loader2, loader]);
         });
 
         it('should return the instance to support chaining', async function () {

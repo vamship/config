@@ -107,22 +107,45 @@ export class Config<T> {
     }
 
     /**
-     * Adds a loader function to the configuration object.
+     * Adds a loader function to the loader list. The order in which properties
+     * are loaded is important and can be controlled by can be influenced by
+     * using the `addToStart` parameter. Depending on the parser that is used,
+     * properties loaded later might override properties loaded earlier, or vice
+     * versa.
+     *
+     *
      *
      * @param loader A loader function that loads configuration data from some
      * source and returns it as a collection of key/value pairs.
      *
+     * @param [addToStart=false] Determines where in the loader list the new
+     * loader will be added. A value of `true` on this parameter will add the
+     * loader to the top of the list, and a `false` (or if the parameter is
+     * omitted) will add the loader to the end of the list.
+     *
      * @returns A reference to the current configuration object, allowing for
      * chaining of method calls.
      */
-    addLoader(loader: ConfigLoader): Config<T> {
+    addLoader(loader: ConfigLoader, addToStart = false): Config<T> {
         _argValidator.checkFunction(loader, 'Invalid loader (arg #1)');
+        if (
+            typeof addToStart !== 'undefined' &&
+            !_argValidator.checkBoolean(addToStart)
+        ) {
+            throw new Error('Invalid addToStart flag (arg #2)');
+        }
+
         if (this._isInitialized) {
             throw new Error(
                 'Cannot add loader after configuration is initialized',
             );
         }
-        this._loaders.push(loader);
+
+        if (addToStart) {
+            this._loaders.unshift(loader);
+        } else {
+            this._loaders.push(loader);
+        }
 
         return this;
     }
