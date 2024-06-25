@@ -4,9 +4,9 @@ import { getProperty, setProperty, hasProperty } from 'dot-prop';
 import { Ajv } from 'ajv';
 
 /**
- * Default parser implementation that takes a collection of properties and
- * merges them into a single object. The collection must be an object containing
- * zero or more key-value pairs.
+ * Parser implementation that takes a collection of properties and merges them
+ * into a single object. The collection must be an object containing zero or
+ * more key-value pairs.
  *
  * Keys can be provided as dot separated strings to indicate nested properties.
  * For example `{ "foo.bar.baz": 42 }` will be merged into
@@ -30,7 +30,7 @@ import { Ajv } from 'ajv';
  *
  * @returns A promise that resolves with the parsed config object.
  */
-export async function defaultParser<T>(
+export async function dotParser<T>(
     properties: Record<string, unknown>[],
     schema?: JSONSchemaType<T>,
 ): Promise<T> {

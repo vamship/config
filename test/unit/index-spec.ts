@@ -6,13 +6,13 @@ import 'mocha';
 _useWithChai(_sinonChai);
 _useWithChai(_chaiAsPromised);
 
-import { defaultParser } from '../../src/default-parser.js';
+import { dotParser } from '../../src/parsers/dot-parser.js';
 import { Config } from '../../src/config.js';
 import * as _index from '../../src/index.js';
 
 describe('index', function () {
     it('should implement methods required by the interface', async function () {
         expect(_index.Config).to.equal(Config);
-        expect(_index.defaultParser).to.equal(defaultParser);
+        expect(_index.dotParser).to.equal(dotParser);
     });
 });

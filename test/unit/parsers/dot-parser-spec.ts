@@ -13,13 +13,35 @@ import {
 } from '@vamship/test-utils';
 import _esmock from 'esmock';
 
-import { ConfigParser } from '../../src/config.js';
-import { defaultParser } from '../../src/default-parser.js';
+import { ConfigParser } from '../../../src/config.js';
+import { dotParser } from '../../../src/parsers/dot-parser.js';
 
-describe('defaultParser()', function () {
+describe('dotParser()', function () {
     type ImportResult<T> = {
         testTarget: ConfigParser<T>;
     };
+
+    async function _import<T>(): Promise<ImportResult<T>> {
+        type ConfigModule<T> = {
+            dotParser: ConfigParser<T>;
+        };
+
+        const importHelper = new MockImportHelper<ConfigModule<T>>(
+            'project://src/parsers/dot-parser.js',
+            {},
+            import.meta.resolve('../../../../working'),
+        );
+
+        const targetModule = await _esmock(
+            importHelper.importPath,
+            importHelper.getLibs(),
+            importHelper.getGlobals(),
+        );
+
+        return {
+            testTarget: targetModule.dotParser,
+        };
+    }
 
     type DummyConfigUncoerced = {
         cfg: {
@@ -208,28 +230,6 @@ describe('defaultParser()', function () {
             { 'cfg.arr.bool': [false] },
             { 'cfg.arr.arr': [123] },
         ];
-    }
-
-    async function _import<T>(): Promise<ImportResult<T>> {
-        type ConfigModule<T> = {
-            defaultParser: ConfigParser<T>;
-        };
-
-        const importHelper = new MockImportHelper<ConfigModule<T>>(
-            'project://src/default-parser.js',
-            {},
-            import.meta.resolve('../../../working'),
-        );
-
-        const targetModule = await _esmock(
-            importHelper.importPath,
-            importHelper.getLibs(),
-            importHelper.getGlobals(),
-        );
-
-        return {
-            testTarget: targetModule.defaultParser,
-        };
     }
 
     _testValues.allButArray().forEach((value) => {

@@ -3,4 +3,4 @@
  * configuration.
  */
 export * from './config.js';
-export * from './default-parser.js';
+export * from './parsers/dot-parser.js';
