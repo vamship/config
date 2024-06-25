@@ -149,13 +149,38 @@ describe('defaultParser()', function () {
         };
 
         if (removeAdditional) {
-            schema.additionalProperties = false;
-            schema.properties!.cfg.additionalProperties = false;
-            schema.properties!.cfg.properties!.str.additionalProperties = false;
-            schema.properties!.cfg.properties!.num.additionalProperties = false;
-            schema.properties!.cfg.properties!.bool.additionalProperties =
+            const schemaForUpdate = schema as {
+                additionalProperties: boolean;
+                properties: {
+                    cfg: {
+                        additionalProperties: boolean;
+                        properties: {
+                            str: {
+                                additionalProperties: boolean;
+                            };
+                            num: {
+                                additionalProperties: boolean;
+                            };
+                            bool: {
+                                additionalProperties: boolean;
+                            };
+                            arr: {
+                                additionalProperties: boolean;
+                            };
+                        };
+                    };
+                };
+            };
+            schemaForUpdate.additionalProperties = false;
+            schemaForUpdate.properties.cfg.additionalProperties = false;
+            schemaForUpdate.properties.cfg.properties!.str.additionalProperties =
                 false;
-            schema.properties!.cfg.properties!.arr.additionalProperties = false;
+            schemaForUpdate.properties.cfg.properties!.num.additionalProperties =
+                false;
+            schemaForUpdate.properties.cfg.properties!.bool.additionalProperties =
+                false;
+            schemaForUpdate.properties.cfg.properties!.arr.additionalProperties =
+                false;
         }
 
         return schema;
@@ -367,7 +392,8 @@ describe('defaultParser()', function () {
     it('should remove additional properties from the object if the schema specifies it', async function () {
         const { testTarget } = await _import<DummyConfig>();
         const properties: Record<string, unknown>[] = createRawConfig();
-        const schema: JSONSchemaType<DummyConfig> = createDummyConfigSchema(true);
+        const schema: JSONSchemaType<DummyConfig> =
+            createDummyConfigSchema(true);
 
         properties.push({ 'cfg.foo.bar': 1234 });
         properties.push({ 'cfg.foo.baz': 1234 });
