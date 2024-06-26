@@ -9,6 +9,7 @@ _useWithChai(_chaiAsPromised);
 import { dotParser } from '../../src/parsers/dot-parser.js';
 import { createEnvLoader } from '../../src/loaders/env-loader.js';
 import { Config } from '../../src/config.js';
+import { createNodeConfig } from '../../src/config-factory.js';
 import * as _index from '../../src/index.js';
 
 describe('index', function () {
@@ -16,5 +17,6 @@ describe('index', function () {
         expect(_index.Config).to.equal(Config);
         expect(_index.dotParser).to.equal(dotParser);
         expect(_index.createEnvLoader).to.equal(createEnvLoader);
+        expect(_index.createNodeConfig).to.equal(createNodeConfig);
     });
 });
