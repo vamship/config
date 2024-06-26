@@ -55,9 +55,9 @@ export class Config<T> {
      * steps including - loading properties, parsing values, and validating the
      * final set of properties.
      */
-    async initialize(): Promise<void> {
+    async initialize(): Promise<Config<T>> {
         if (this._isInitialized) {
-            return;
+            return this;
         }
 
         if (typeof this._parser === 'undefined') {
@@ -104,6 +104,8 @@ export class Config<T> {
         // Set config data as an accessible property
         this._config = config;
         this._isInitialized = true;
+
+        return this;
     }
 
     /**

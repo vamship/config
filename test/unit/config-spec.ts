@@ -562,6 +562,17 @@ describe('Config', function () {
             expect(instance.isInitialized).to.be.true;
         });
 
+        it('should return the config instance', async function () {
+            const { testTarget } = await _import();
+            const instance = new testTarget<DummyConfig>();
+
+            _setParser(instance);
+
+            const ret = await instance.initialize();
+
+            expect(ret).to.equal(instance);
+        });
+
         it('should do nothing if the instance is already initialized', async function () {
             const { instance } = await _createInstance<DummyConfig>();
             const { loaders } = _addLoaders(instance, 3);
@@ -570,20 +581,24 @@ describe('Config', function () {
 
             loaders.forEach((loader) => expect(loader).to.not.have.been.called);
 
-            await instance.initialize();
+            let ret = await instance.initialize();
 
             loaders.forEach((loader) => {
                 expect(loader).to.have.been.calledWithExactly();
                 expect(loader.callCount).to.equal(1);
             });
+
+            expect(ret).to.equal(instance);
 
             // Second invocation
-            await instance.initialize();
+            ret = await instance.initialize();
 
             loaders.forEach((loader) => {
                 expect(loader).to.have.been.calledWithExactly();
                 expect(loader.callCount).to.equal(1);
             });
+
+            expect(ret).to.equal(instance);
         });
     });
 });
