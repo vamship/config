@@ -32,7 +32,7 @@ describe('[configFactory]', function () {
 
     async function _import<T>(): Promise<ImportResult<T>> {
         type ConfigFactoryModule<T> = {
-            createNodeConfig(): typeof createNodeConfig;
+            createNodeConfig: typeof createNodeConfig<T>;
         };
 
         const importHelper = new MockImportHelper<ConfigFactoryModule<T>>(
@@ -95,7 +95,7 @@ describe('[configFactory]', function () {
 
             expect(configMock.ctor).to.not.have.been.called;
 
-            const config = createNodeConfig();
+            createNodeConfig();
 
             expect(configMock.ctor).to.have.been.calledOnceWithExactly();
             expect(configMock.ctor).to.have.been.calledWithNew;
@@ -168,13 +168,13 @@ describe('[configFactory]', function () {
             expect(setSchemaMethod.stub).to.not.have.been.called;
         });
 
-        it('should return the resultant config object', async function() {
+        it('should return the resultant config object', async function () {
             const { createNodeConfig, configMock } =
                 await _import<DummyConfig>();
 
             const ret = createNodeConfig();
 
             expect(ret).to.equal(configMock.instance);
-        })
+        });
     });
 });
