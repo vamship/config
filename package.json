@@ -1,6 +1,6 @@
 {
     "name": "@vamship/config",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Wraps a config and provides access methods for scoped config values",
     "type": "module",
     "main": "src/index.js",
