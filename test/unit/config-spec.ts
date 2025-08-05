@@ -114,9 +114,12 @@ describe('Config', function () {
             const { instance, instancePrivate } =
                 await _createInstance<DummyConfig>();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instance.isInitialized).to.be.false;
             expect(instancePrivate._loaders).to.deep.equal([]);
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instancePrivate._parser).to.be.undefined;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instancePrivate._schema).to.be.undefined;
         });
     });
@@ -238,6 +241,7 @@ describe('Config', function () {
             const { instance, instancePrivate } =
                 await _createInstance<DummyConfig>();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instancePrivate._parser).to.be.undefined;
 
             const parser = async () => ({} as DummyConfig);
@@ -288,6 +292,7 @@ describe('Config', function () {
             const { instance, instancePrivate } =
                 await _createInstance<DummyConfig>();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instancePrivate._schema).to.be.undefined;
 
             const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
@@ -362,6 +367,7 @@ describe('Config', function () {
             _setParser(instance);
 
             await instance.initialize();
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instance.isInitialized).to.be.true;
         });
 
@@ -391,6 +397,7 @@ describe('Config', function () {
             const failIndex = _testValues.getNumber(0, loaders.length - 1);
 
             loaders.forEach((loader, index) => {
+                //eslint-disable-next-line tsel/no-unused-expressions
                 index === failIndex
                     ? loader.rejects(new Error(error))
                     : loader.resolves([]);
@@ -412,6 +419,7 @@ describe('Config', function () {
                 const failIndex = _testValues.getNumber(0, loaders.length - 1);
 
                 loaders.forEach((loader, index) => {
+                    //eslint-disable-next-line tsel/no-unused-expressions
                     index === failIndex
                         ? loader.resolves(value)
                         : loader.resolves([]);
@@ -444,10 +452,12 @@ describe('Config', function () {
                 loader.resolves([configValues[index]]),
             );
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(parser).to.not.have.been.called;
 
             await instance.initialize();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(parser).to.have.been.calledOnce;
             expect(parser.firstCall.args).to.deep.equal([configValues, schema]);
         });
@@ -491,12 +501,16 @@ describe('Config', function () {
             const createSchemaCheckerMock =
                 schemaHelperMock.mocks.createSchemaChecker;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(createSchemaCheckerMock.stub).to.not.have.been.called;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(checkSchemaMock).to.not.have.been.called;
 
             await instance.initialize();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(createSchemaCheckerMock.stub).to.not.have.been.called;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(checkSchemaMock).to.not.have.been.called;
         });
 
@@ -521,7 +535,9 @@ describe('Config', function () {
             const createSchemaCheckerMock =
                 schemaHelperMock.mocks.createSchemaChecker;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(createSchemaCheckerMock.stub).to.not.have.been.called;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(checkSchemaMock).to.not.have.been.called;
 
             await instance.initialize();
@@ -559,6 +575,7 @@ describe('Config', function () {
             _setParser(instance);
 
             await instance.initialize();
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instance.isInitialized).to.be.true;
         });
 

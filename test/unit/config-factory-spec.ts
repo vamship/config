@@ -93,11 +93,13 @@ describe('[configFactory]', function () {
             const { createNodeConfig, configMock } =
                 await _import<DummyConfig>();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(configMock.ctor).to.not.have.been.called;
 
             createNodeConfig();
 
             expect(configMock.ctor).to.have.been.calledOnceWithExactly();
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(configMock.ctor).to.have.been.calledWithNew;
         });
 
@@ -105,6 +107,7 @@ describe('[configFactory]', function () {
             const { createNodeConfig, createEnvLoaderMock } =
                 await _import<DummyConfig>();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(createEnvLoaderMock).to.not.have.been.called;
 
             createNodeConfig();
@@ -117,6 +120,7 @@ describe('[configFactory]', function () {
                 await _import<DummyConfig>();
             const addLoaderMethod = configMock.mocks.addLoader;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(addLoaderMethod.stub).to.not.have.been.called;
 
             createNodeConfig();
@@ -131,6 +135,7 @@ describe('[configFactory]', function () {
                 await _import<DummyConfig>();
             const setParserMethod = configMock.mocks.setParser;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(setParserMethod.stub).to.not.have.been.called;
 
             createNodeConfig();
@@ -146,6 +151,7 @@ describe('[configFactory]', function () {
             const setSchemaMethod = configMock.mocks.setSchema;
             const schema = { type: 'object' } as JSONSchemaType<DummyConfig>;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(setSchemaMethod.stub).to.not.have.been.called;
 
             createNodeConfig(schema);
@@ -161,10 +167,12 @@ describe('[configFactory]', function () {
             const setSchemaMethod = configMock.mocks.setSchema;
             const schema = undefined;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(setSchemaMethod.stub).to.not.have.been.called;
 
             createNodeConfig(schema);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(setSchemaMethod.stub).to.not.have.been.called;
         });
 
